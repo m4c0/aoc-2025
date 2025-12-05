@@ -17,19 +17,28 @@ func run() error {
   lines := strings.Split(string(code), "\n")
   for _, line := range lines {
     if line == "" {
-      break
+      continue
     }
     n, err := strconv.Atoi(line[1:])
     if err != nil {
       return err
     }
     if line[0] == 'L' {
-      acc -= n
+      for n > 0 {
+        n--
+        acc--
+        if acc % 100 == 0 {
+          count++
+        }
+      }
     } else if line[0] == 'R' {
-      acc += n
-    }
-    if acc % 100 == 0 {
-      count++
+      for n > 0 {
+        n--
+        acc++
+        if acc % 100 == 0 {
+          count++
+        }
+      }
     }
   }
 
