@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -10,7 +11,17 @@ int main() {
   for (char * ptr = buf; *ptr; ptr += strlen(ptr) + 1) {
     char * pp = strchr(ptr, ',');
     if (pp) *pp = 0;
+    pp = strchr(ptr, '\n');
+    if (pp) *pp = 0;
 
-    printf("-- %s\n", ptr);
+    char * l = ptr;
+    
+    ptr = strchr(l, '-');
+    assert(ptr);
+    *ptr++ = 0;
+
+    char * r = ptr;
+
+    printf("-- [%s][%s]\n", l, r);
   }
 }
