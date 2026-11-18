@@ -5,59 +5,58 @@
 // enough to take an input line
 #define LEN 200
 
-static int count(char ** l) {
-  int res = 0;
-  for (int i = 1; l[1][i + 1]; i++) {
-    int valid = 0;
-    if (l[1][i] == '@') {
-      int n = 0;
-      for (int dx = -1; dx <= 1; dx++) {
-        for (int y = 0; y <= 2; y++) {
-          if (dx == 0 && y == 1) continue;
-          if (l[y][i + dx] == '@') n++;
-        }
-      }
-      valid = n < 4;
+static int ding(char ** l, int i, int j) {
+  int n = 0;
+  for (int di = -1; di <= 1; di++) {
+    for (int dj = -1; dj <= 1; dj++) {
+      if (!di && !dj) continue;
+      if (l[i + di][j + dj] == '.') continue;
+      n++;
+      if (n >= 4) return 0;
     }
-    if (valid) res++;
-    printf("%c", valid ? 'x' : l[1][i]);
   }
-  printf("\n");
+  return 1;
+}
+
+static int count(char ** l, int size) {
+  int res = 0;
+  for (int i = 1; i <= size; i++) {
+    for (int j = 1; j <= size; j++) {
+      int valid = 0;
+      if (l[i][j] == '@') valid = ding(l, i, j);
+      printf("%c", valid ? 'x' : l[i][j]);
+      if (valid) res++;
+    }
+    printf("\n");
+  }
   return res;
 }
 
 static void * readline(char * ptr, int len, FILE * f) {
   void * p = fgets(ptr + 1, len, f);
-  ptr[strlen(ptr)] = 0;
-  ptr[strlen(ptr) - 1] = '.';
+  ptr[strlen(ptr) - 1] = 0;
   return p;
 }
 
 int main() {
-  FILE * f = fopen("day4.input", "rb");
+  FILE * f = fopen("day4.sample", "rb");
 
-  char * l[3];
-  for (int i = 0; i < 3; i++) {
+  char * l[LEN], * r[LEN];
+  for (int i = 0; i < LEN; i++) {
     l[i] = malloc(LEN + 1);
-    for (int j = 0; j < LEN; j++) l[i][j] = '.';
-    l[i][LEN] = 0;
+    r[i] = malloc(LEN + 1);
   }
 
-  int first = 1;
-  int n = 0;
-  while (readline(l[2], LEN, f)) {
-    if (!first) n += count(l);
+  int size = 0;
+  while (readline(l[size + 1], LEN, f)) size++;
 
-    first = 0;
-
-    char * tmp = l[0];
-    l[0] = l[1];
-    l[1] = l[2];
-    l[2] = tmp;
+  for (int j = 0; j < size + 2; j++) {
+    l[0][j] = '.';
+    l[size + 1][j] = '.';
+    l[j + 1][0] = '.';
+    l[j + 1][size + 1] = '.';
+    l[j + 1][size + 2] = 0;
   }
 
-  for (int j = 0; j < LEN; j++) l[2][j] = '.';
-  n += count(l);
-
-  printf("%d\n", n);
+  printf("%d\n", count(l, size));
 }
