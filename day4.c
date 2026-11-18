@@ -18,12 +18,13 @@ static int ding(char ** l, int i, int j) {
   return 1;
 }
 
-static int count(char ** l, int size) {
+static int count(char ** l, char ** r, int size) {
   int res = 0;
   for (int i = 1; i <= size; i++) {
     for (int j = 1; j <= size; j++) {
       int valid = 0;
       if (l[i][j] == '@') valid = ding(l, i, j);
+      r[i][j] = valid ? '.' : l[i][j];
       printf("%c", valid ? 'x' : l[i][j]);
       if (valid) res++;
     }
@@ -39,9 +40,10 @@ static void * readline(char * ptr, int len, FILE * f) {
 }
 
 int main() {
-  FILE * f = fopen("day4.sample", "rb");
+  FILE * f = fopen("day4.input", "rb");
 
-  char * l[LEN], * r[LEN];
+  char ** l = malloc(LEN * sizeof(void *));
+  char ** r = malloc(LEN * sizeof(void *));
   for (int i = 0; i < LEN; i++) {
     l[i] = malloc(LEN + 1);
     r[i] = malloc(LEN + 1);
@@ -51,12 +53,21 @@ int main() {
   while (readline(l[size + 1], LEN, f)) size++;
 
   for (int j = 0; j < size + 2; j++) {
-    l[0][j] = '.';
-    l[size + 1][j] = '.';
-    l[j + 1][0] = '.';
-    l[j + 1][size + 1] = '.';
-    l[j + 1][size + 2] = 0;
+    l[0][j] = r[0][j] = '.';
+    l[size + 1][j] = r[size + 1][j] = '.';
+    l[j + 1][0] = r[j + 1][0] = '.';
+    l[j + 1][size + 1] = r[j + 1][size + 1] = '.';
+    l[j + 1][size + 2] = r[j + 1][size + 2] = 0;
   }
 
-  printf("%d\n", count(l, size));
+  int sum = 0;
+  int n;
+  while ((n = count(l, r, size))) {
+    sum += n;
+    char ** tmp = r;
+    r = l;
+    l = tmp;
+
+    printf("%d (%d)\n\n", n, sum);
+  }
 }
