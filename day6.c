@@ -27,6 +27,8 @@ int main() {
     lcount++;
   }
 
+  int linelen = strlen(buf);
+
   char ** lines = malloc(sizeof(void *) * lcount);
   char * p = buf;
   for (int i = 0; i < lcount; i++) {
@@ -34,11 +36,18 @@ int main() {
     p += strlen(p) + 1;
   }
 
-  int clen = 0;
-  for (int i = 0; i < lcount; i++) {
-    int l = colen(lines[i]);
-    if (l > clen) clen = l;
+  while (linelen > 0) {
+    int clen = 0;
+    for (int i = 0; i < lcount; i++) {
+      int l = colen(lines[i]);
+      if (l > clen) clen = l;
+    }
+    for (int i = 0; i < lcount; i++) {
+      lines[i][clen] = 0;
+      printf("[%s]", lines[i]);
+      lines[i] += clen + 1;
+    }
+    puts("");
+    linelen -= clen + 1;
   }
-
-  printf("%d\n", clen);
 }
