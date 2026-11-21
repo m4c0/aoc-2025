@@ -16,7 +16,7 @@ static int colen(const char * str) {
 }
 
 int main() {
-  FILE * f = fopen("day6.input", "rb");
+  FILE * f = fopen("day6.sample", "rb");
 
   char buf[102400];
   fread(buf, 1, sizeof(buf), f);
@@ -37,8 +37,8 @@ int main() {
   }
 
   int64_t res = 0;
-  int64_t nums[8];
   while (linelen > 0) {
+    int64_t nums[8] = {0};
     int clen = 0;
     for (int i = 0; i < lcount; i++) {
       int l = colen(lines[i]);
@@ -59,7 +59,10 @@ int main() {
           res += nums[j];
         }
       } else {
-        nums[i] = atoll(lines[i]);
+        for (int j = 0; j < clen; j++) {
+          if (lines[i][j] == ' ') continue;
+          nums[j] = nums[j] * 10 + lines[i][j] - '0';
+        }
       }
 
       lines[i] += clen + 1;
